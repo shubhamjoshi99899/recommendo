@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Webcam from "react-webcam";
 import WordCloudComponent from "./WordCloud";
 import Image from "next/image";
+
 interface Responses {
   [key: string]: number;
 }
@@ -23,9 +24,7 @@ export default function Survey() {
   const [step, setStep] = useState<"home" | "participate" | "survey">("home");
   const [name, setName] = useState("");
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const webcamRef = useRef<Webcam>(null);
-  const [cloudKey, setCloudKey] = useState(0);
 
   const options = [
     "Happy",
@@ -86,7 +85,6 @@ export default function Survey() {
     setResponses(updatedResponses);
     localStorage.setItem("surveyResponses", JSON.stringify(updatedResponses));
 
-    setCloudKey((prevKey) => prevKey + 1);
     setStep("home");
   };
 
@@ -95,41 +93,16 @@ export default function Survey() {
     value: responses[option] || 1000,
   }));
 
-  const data = [
-    { text: "Hey", value: 1000 },
-    { text: "lol", value: 200 },
-    { text: "first impression", value: 10000 },
-    { text: "very cool", value: 10000 },
-    { text: "duck", value: 9000 },
-  ];
-
-  console.log(words);
-
   return (
     <div className="relative w-full h-screen flex items-center justify-center text-white overflow-hidden">
       <div className="absolute inset-0">
         <Image
-          alt={"background"}
+          alt="background"
           src="/background.jpg"
           className="absolute w-full h-full object-cover opacity-50"
-          width={100}
-          height={100}
+          width={1920}
+          height={1080}
         />
-        {/* <div className="absolute inset-0 bg-black bg-opacity-60" />
-         */}
-        {/* <WordCloud
-          data={words}
-          width={500}
-          height={500}
-          fontSize={(word) => Math.log2(word.value) * 2}
-          spiral="rectangular"
-          rotate={(word) => word.value % 90}
-          font="Times"
-          fontStyle="italic"
-          fontWeight="bold"
-          padding={5}
-          random={Math.random}
-        /> */}
         <WordCloudComponent words={words} />
       </div>
 
@@ -137,6 +110,7 @@ export default function Survey() {
         <motion.img
           key={p.id}
           src={p.image}
+          alt={p.name}
           className="absolute rounded-full border-4 border-white shadow-lg"
           style={{
             width: p.size,
@@ -151,26 +125,12 @@ export default function Survey() {
         />
       ))}
 
-      {/* Centered Word Cloud */}
-      {/* <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex justify-center items-center w-[600px] h-[300px]  rounded-lg p-4"> */}
-      {/* <WordCloud
-        data={data}
-        // width={600}
-        // height={300}
-        // font="Arial"
-        // fontWeight="bold"
-        // padding={5}
-        // random={Math.random}
-      /> */}
-      {/* </div> */}
-
       {step === "home" && (
         <div
           className="absolute inset-0 flex flex-col items-center justify-center text-center"
           onClick={() => setStep("participate")}
         >
           <h2 className="text-4xl font-bold">Click Anywhere to Participate</h2>
-          {/* <WordCloud data={data} /> */}
         </div>
       )}
 
@@ -187,7 +147,7 @@ export default function Survey() {
             placeholder="Your Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="px-4 py-2 rounded-md text-black  border-gray-300 mb-4"
+            className="px-4 py-2 rounded-md text-black border-gray-300 mb-4"
           />
           <button
             onClick={capture}
@@ -196,7 +156,13 @@ export default function Survey() {
             Capture Photo
           </button>
           {capturedImage && (
-            <img src={capturedImage} className="w-24 h-24 mt-4 rounded-full" />
+            <Image
+              src={capturedImage}
+              alt="Captured"
+              width={100}
+              height={100}
+              className="w-24 h-24 mt-4 rounded-full"
+            />
           )}
           {capturedImage && (
             <button
