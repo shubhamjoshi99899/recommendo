@@ -3,13 +3,6 @@ import dynamic from "next/dynamic";
 
 const WordCloud = dynamic(() => import("react-d3-cloud"), { ssr: false });
 
-const data = [
-  { text: "Hey", value: 1000 },
-  { text: "lol", value: 200 },
-  { text: "first", value: 200 },
-  { text: "very", value: 10000 },
-  { text: "duck", value: 10 },
-];
 const fontSizeMapper = (word: any) => Math.log2(word.value) * 1 + 20; // Increase font size scaling
 const rotate = () => 0; // Keep words horizontal
 const padding = 5; // Adjust padding to prevent words from being too close
