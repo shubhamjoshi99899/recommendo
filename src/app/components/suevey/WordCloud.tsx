@@ -3,23 +3,18 @@ import dynamic from "next/dynamic";
 
 const WordCloud = dynamic(() => import("react-d3-cloud"), { ssr: false });
 
-const fontSizeMapper = (word: any) => Math.log2(word.value) * 1 + 40;
+const fontSizeMapper = (word: any) => Math.log2(word.value) * 5 + 40;
 const rotate = () => 0;
 const padding = 5;
+
 interface Props {
-  words: any;
+  words: { text: string; value: number }[];
 }
+
 const WordCloudComponent: React.FC<Props> = ({ words }) => {
   return (
-    <div style={{ width: "100%", height: "500px", position: "relative" }}>
-      <div
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-        }}
-      >
+    <div className="relative w-full h-[500px]">
+      <div className="absolute w-full h-full z-10">
         <WordCloud
           data={words}
           font="sans-serif"
@@ -27,11 +22,19 @@ const WordCloudComponent: React.FC<Props> = ({ words }) => {
           rotate={rotate}
           padding={padding}
           fill={(word: any) => {
-            const colors = ["#A1C181", "#FCCA46", "#619B8A", "#3D348B"];
+            const colors = [
+              "#FCCA46",
+              "#386659",
+              "#E63946",
+              "#F4A261",
+              "#2A9D8F",
+              "#E76F51",
+              "#264653",
+            ];
             return colors[Math.floor(Math.random() * colors.length)];
           }}
           width={800}
-          height={400}
+          height={600}
         />
       </div>
     </div>

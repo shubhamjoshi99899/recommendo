@@ -54,13 +54,13 @@ export default function Survey() {
   };
 
   const saveParticipant = () => {
-    if (capturedImage && name) {
+    if (capturedImage && name.trim()) {
       setStep("survey");
     }
   };
 
   const handleVote = (option: string) => {
-    if (!capturedImage || !name) return;
+    if (!capturedImage || !name.trim()) return;
 
     const newParticipant: Participant = {
       id: Date.now(),
@@ -86,6 +86,8 @@ export default function Survey() {
     localStorage.setItem("surveyResponses", JSON.stringify(updatedResponses));
 
     setStep("home");
+    setCapturedImage(null);
+    setName("");
   };
 
   const words = options.map((option) => ({
@@ -94,15 +96,53 @@ export default function Survey() {
   }));
 
   return (
-    <div className="relative w-full h-screen flex items-center justify-center text-white overflow-hidden">
-      <div className="absolute inset-0">
-        <Image
-          alt="background"
-          src="/background.jpg"
-          className="absolute w-full h-full"
-          width={1920}
-          height={1080}
-        />
+    <div className="relative w-full h-screen flex items-center  bg-opacity-50 justify-center text-white overflow-hidden">
+      <div className="relative w-full h-screen flex items-center justify-center text-white overflow-hidden">
+        {/* Dark Overlay with Reduced Opacity */}
+
+        {/* Background Image with Horizontal Scroll Animation */}
+        <div className="absolute inset-0 img-background-horizontal after:content-[''] after:absolute after:inset-0 after:bg-white after:opacity-20"></div>
+
+        {/* Content */}
+
+        <style jsx>{`
+          .img-background-horizontal {
+            background-image: url("https://cdn.pixabay.com/photo/2020/12/18/15/29/mountains-5842346_1280.jpg");
+            background-position: 0% 0%;
+            height: 100vh;
+            background-size: cover;
+            width: 100vw;
+            animation: horizontalMove 50s infinite;
+            animation-timing-function: ease;
+            position: relative;
+            opacity: 0.6;
+            background-repeat: no-repeat;
+          }
+
+          .img-background-horizontal::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(
+              255,
+              255,
+              255,
+              0.2
+            ); /* Reducing opacity by adding white transparent layer */
+          }
+
+          @keyframes horizontalMove {
+            0% {
+              background-position: 0% 0%;
+            }
+            50% {
+              background-position: 100% 20%;
+            }
+            100% {
+              background-position: 0% 0%;
+            }
+          }
+        `}</style>
       </div>
 
       {participants.map((p) => (
@@ -118,8 +158,8 @@ export default function Survey() {
             left: `${p.position.left}%`,
             zIndex: 1,
           }}
-          initial={{ opacity: 1, scale: 0 }}
-          animate={{ opacity: 0.8, scale: 1 }}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1 }}
         />
       ))}
@@ -129,61 +169,64 @@ export default function Survey() {
           className="absolute inset-0 flex flex-col items-center justify-center text-center"
           onClick={() => setStep("participate")}
         >
-          {/* <h2 className="text-4xl font-bold">Click Anywhere to Participate</h2> */}
           <WordCloudComponent words={words} />
         </div>
       )}
 
       {step === "participate" && (
-        <div className="relative z-10 flex flex-col items-center justify-center p-6 bg-white bg-opacity-80 rounded-lg">
-          <h2 className="text-xl mb-4">Enter Your Name & Capture Photo</h2>
+        <div className="relative z-10 flex flex-col items-center justify-center p-6 bg-white bg-opacity-90 rounded-lg shadow-xl">
+          <h2 className="text-xl font-semibold text-black mb-4">
+            Enter Your Name & Capture Photo
+          </h2>
           <Webcam
             ref={webcamRef}
             screenshotFormat="image/jpeg"
-            className="w-64 h-48 rounded-md mb-4"
+            className="w-60 h-40 rounded-md mb-4"
           />
           <input
             type="text"
             placeholder="Your Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="px-4 py-2 rounded-md text-black border-gray-300 mb-4"
+            className="px-4 py-2 rounded-md text-black border border-gray-300 mb-4 w-full"
           />
           <button
             onClick={capture}
-            className="bg-blue-500 px-4 py-2 mt-4 rounded-md"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 mt-4 rounded-md"
           >
             Capture Photo
           </button>
           {capturedImage && (
-            <Image
-              src={capturedImage}
-              alt="Captured"
-              width={100}
-              height={100}
-              className="w-24 h-24 mt-4 rounded-full"
-            />
-          )}
-          {capturedImage && (
-            <button
-              onClick={saveParticipant}
-              className="bg-green-500 px-4 py-2 mt-4 rounded-md"
-            >
-              Proceed to Survey
-            </button>
+            <>
+              <Image
+                src={capturedImage}
+                alt="Captured"
+                width={100}
+                height={100}
+                className="w-24 h-24 mt-4 rounded-full"
+              />
+              <button
+                onClick={saveParticipant}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 mt-4 rounded-md"
+              >
+                Proceed to Survey
+              </button>
+            </>
           )}
         </div>
       )}
 
       {step === "survey" && (
-        <div className="absolute z-10 flex flex-col items-center justify-center p-6 bg-black bg-opacity-80 rounded-lg">
-          <h2 className="text-2xl mb-4">Select How You Feel</h2>
+        <div className="absolute z-10 flex flex-col items-center justify-center p-6 bg-black bg-opacity-80 rounded-lg shadow-xl">
+          <h2 className="text-2xl font-semibold text-white mb-4">
+            Select How You Feel
+          </h2>
           <div className="grid grid-cols-2 gap-2">
             {options.map((option) => (
               <button
                 key={option}
                 onClick={() => handleVote(option)}
-                className="bg-blue-500 px-4 py-2 rounded-md m-1"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md m-1"
               >
                 {option}
               </button>
