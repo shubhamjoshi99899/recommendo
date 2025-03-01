@@ -3,10 +3,9 @@ import dynamic from "next/dynamic";
 
 const WordCloud = dynamic(() => import("react-d3-cloud"), { ssr: false });
 
-const fontSizeMapper = (word: any) => Math.log2(word.value) * 1 + 20; // Increase font size scaling
-const rotate = () => 0; // Keep words horizontal
-const padding = 5; // Adjust padding to prevent words from being too close
-
+const fontSizeMapper = (word: any) => Math.log2(word.value) * 1 + 40;
+const rotate = () => 0;
+const padding = 5;
 interface Props {
   words: any;
 }

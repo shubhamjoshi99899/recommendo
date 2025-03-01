@@ -99,11 +99,10 @@ export default function Survey() {
         <Image
           alt="background"
           src="/background.jpg"
-          className="absolute w-full h-full object-cover opacity-50"
+          className="absolute w-full h-full"
           width={1920}
           height={1080}
         />
-        <WordCloudComponent words={words} />
       </div>
 
       {participants.map((p) => (
@@ -119,8 +118,8 @@ export default function Survey() {
             left: `${p.position.left}%`,
             zIndex: 1,
           }}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 1, scale: 0 }}
+          animate={{ opacity: 0.8, scale: 1 }}
           transition={{ duration: 1 }}
         />
       ))}
@@ -130,13 +129,14 @@ export default function Survey() {
           className="absolute inset-0 flex flex-col items-center justify-center text-center"
           onClick={() => setStep("participate")}
         >
-          <h2 className="text-4xl font-bold">Click Anywhere to Participate</h2>
+          {/* <h2 className="text-4xl font-bold">Click Anywhere to Participate</h2> */}
+          <WordCloudComponent words={words} />
         </div>
       )}
 
       {step === "participate" && (
         <div className="relative z-10 flex flex-col items-center justify-center p-6 bg-white bg-opacity-80 rounded-lg">
-          <h2 className="text-2xl mb-4">Enter Your Name & Capture Photo</h2>
+          <h2 className="text-xl mb-4">Enter Your Name & Capture Photo</h2>
           <Webcam
             ref={webcamRef}
             screenshotFormat="image/jpeg"
